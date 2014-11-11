@@ -332,6 +332,34 @@ public class DataService extends GitHubService {
 			params.put("force", true); //$NON-NLS-1$
 		return client.post(uri.toString(), params, Reference.class);
 	}
+	
+	/**
+	 * Delete reference
+	 * 
+	 * @param repository
+	 * @param reference
+	 * @throws IOException
+	 */
+	 public void deleteReference(IRepositoryIdProvider repository,
+	 		Reference reference) throws IOException {
+	 	final String id = getId(repository);
+	 	if (reference == null)
+	 		throw new IllegalArgumentException("Reference cannot be null"); //$NON-NILS-1$
+	 	String ref = reference.getRef();
+	 	if (ref == null)
+			throw new IllegalArgumentException("Ref cannot be null"); //$NON-NLS-1$
+		if (ref.length() == 0)
+			throw new IllegalArgumentException("Ref cannot be empty"); //$NON-NLS-1$
+	 	
+	 	StringBuilder uri = new StringBuilder();
+	 	uri.append(SEGMENT_REPOS);
+	 	uri.append('/').append(id);
+	 	uri.append(SEGMENT_GIT);
+	 	if (!ref.startsWith("refs/")) //$NON-NILS-1$
+	 		uri.append(SEGMENT_REFS);
+	 	uri.append('/').append(ref);
+	 	client.delete(uri.toString());
+	 }
 
 	/**
 	 * Get commit for given SHA-1
